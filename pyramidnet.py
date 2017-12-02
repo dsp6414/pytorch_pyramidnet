@@ -55,18 +55,9 @@ class BasicBlock(nn.Module):
         y = self.bn3(y)
 
         if y.size(1) != x.size(1):
-            if x.is_cuda:
-                padding = Variable(torch.zeros(y.size(0),
-                                               y.size(1) - x.size(1),
-                                               y.size(2),
-                                               y.size(3)).cuda())
-            else:
-                padding = Variable(torch.zeros(y.size(0),
-                                               y.size(1) - x.size(1),
-                                               y.size(2),
-                                               y.size(3)))
-
-            y += torch.cat([self.shortcut(x), padding], dim=1)
+            y += F.pad(self.shortcut(x),
+                       (0, 0, 0, 0, 0, y.size(1) - x.size(1)),
+                       'constant', 0)
         else:
             y += self.shortcut(x)
         return y
@@ -124,18 +115,9 @@ class BottleneckBlock(nn.Module):
         y = self.bn4(y)
 
         if y.size(1) != x.size(1):
-            if x.is_cuda:
-                padding = Variable(torch.zeros(y.size(0),
-                                               y.size(1) - x.size(1),
-                                               y.size(2),
-                                               y.size(3)).cuda())
-            else:
-                padding = Variable(torch.zeros(y.size(0),
-                                               y.size(1) - x.size(1),
-                                               y.size(2),
-                                               y.size(3)))
-
-            y += torch.cat([self.shortcut(x), padding], dim=1)
+            y += F.pad(self.shortcut(x),
+                       (0, 0, 0, 0, 0, y.size(1) - x.size(1)),
+                       'constant', 0)
         else:
             y += self.shortcut(x)
         return y
